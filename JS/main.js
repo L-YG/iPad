@@ -3,7 +3,8 @@ import ipads from '../data/ipads.js';
 import navigations from '../data/navigations.js';
 
 
-// -------- BASKET-STARTER --------
+
+// BASKET-STARTER
 const basketStarterEl = document.querySelector('header .basket-starter');
 const basketEl = basketStarterEl.querySelector('.basket'); // 중복을 줄임
 
@@ -34,7 +35,7 @@ window.addEventListener('click', function () {
 
 
 
-// -------- SEARCH-WRAP (애니메이션 처리) --------
+// SEARCH-WRAP (애니메이션 처리 및 스크롤 고정)
 const headerEl = document.querySelector('header');
 const headerMenuEls = [...headerEl.querySelectorAll('ul.menu > li')]; // 전개 연산자로 해체하고 배열 데이터로 변환
 const searchWrapEl = headerEl.querySelector('.search-wrap');
@@ -48,6 +49,7 @@ const searchDelayEls = [...searchWrapEl.querySelectorAll('li')]; // 전개 연�
 // 추상화 개념
 function showSearch() {
   headerEl.classList.add('searching')
+  stopScroll()
   document.documentElement.classList.add('fixed') // HTML에 클래스 추가
   headerMenuEls.reverse().forEach(function (el, index) {
     el.style.transitionDelay = index * .4 / headerMenuEls.length + 's' // 인덱스 크기만큼 시간을 더함, li 태그에 transition 태그가 있어야 delay 적용 가능함
@@ -62,7 +64,7 @@ function showSearch() {
 
 function hideSearch() {
   headerEl.classList.remove('searching')
-  document.documentElement.classList.remove('fixed') // HTML에 클래스 추가
+  playScroll()
   headerMenuEls.reverse().forEach(function (el, index) {
     el.style.transitionDelay = index * .4 / headerMenuEls.length + 's' // 인덱스 크기만큼 시간을 더함, li 태그에 transition 태그가 있어야 delay 적용 가능함
   })
@@ -89,19 +91,37 @@ searchCloserEl.addEventListener('click', hideSearch);
 // shadow와 text, search-icon, search-closer은 상속 관계가 아니기 때문에
 // event.stopPropagation()를 써서 전파를 막을 필요가 없음
 searchShadowEl.addEventListener('click', hideSearch);
+function playScroll(){
+  document.documentElement.classList.remove('fixed') // HTML에 클래스 추가
+}
+function stopScroll(){
+  document.documentElement.classList.add('fixed') // HTML에 클래스 추가
+}
+
+
+// HEADER ▶ MENU-STARTER (@MEDIA 메뉴 토글 기능)
+const menuStarterEl = document.querySelector('header .menu-starter')
+menuStarterEl.addEventListener('click', function(){
+  if(headerEl.classList.contains('menuing')){
+  headerEl.classList.remove('menuing')
+  playScroll()
+  } else { 
+    headerEl.classList.add('menuing')
+    stopScroll()
+  }
+})
 
 
 
-// -------- INFO (요소의 가시성 관찰) --------
+// INFO (각 글자 및 아이콘이 뷰포트에 보이면 나타내는 기능)
 const io = new IntersectionObserver(function (entries){ // 복수 형태의 배열 데이터가 들어옴
   entries.forEach(function (entry) { // 관찰하는 개별적인 대상
     if (!entry.isIntersecting){
-      return // true의 경우 false가 되고 return이 되지 않고, false인 경우 true가 되고 return이 실행됨
+      return // true의 경우 false로 변경되고 .show 추가, return이 되지 않고, false인 경우 true가 되고 return이 실행되면서 나가짐
     }
     entry.target.classList.add('show')
   });
 });
-
 // const io = new IntersectionObserver(function (entries){ // 복수 형태의 배열 데이터가 들어옴
 //   entries.forEach(function (entry) { // 관찰하는 개별적인 대상
 //     if (!entry.isIntersecting){ // true인 경우에만 실행
@@ -113,13 +133,15 @@ const io = new IntersectionObserver(function (entries){ // 복수 형태의 배�
 // });
 
 const infoEls = document.querySelectorAll('.info')
+// .info를 가진 데이터를 모두 배열 데이터로 불러옴
 infoEls.forEach(function (el) {
+  //요소.ovserve(데이터)
   io.observe(el)
 })
 
 
 
-// -------- VIDEO (비디오 재생!) --------
+// -------- VIDEO (비디오 재생 기능)
 const videoEl = document.querySelector('.stage video');
 const playBtn = document.querySelector('.stage .controller--play');
 const pauseBtn = document.querySelector('.stage .controller--pause');
@@ -170,7 +192,7 @@ ipads.forEach(function(ipad){
 
 
 
-// NAVIGATIONS
+// NAVIGATIONS (네비게이션 메뉴를 불러오는 기능)
 const navigationEl = document.querySelector('footer .navigations')
 navigations.forEach(function(nav){
   const mapEl = document.createElement('div')
