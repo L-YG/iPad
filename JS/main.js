@@ -134,18 +134,6 @@ searchCancelerEl.addEventListener('click', function(){
 
 
 
-/* 뷰포트 크기가 변경되면 class 제거 */
-window.addEventListener('resize', function () {
-  if (window.innerWidth <= 740){
-    headerEl.classList.remove('searching')
-  } else {
-    headerEl.classList.remove('searching-mobile')
-    headerEl.classList.remove('menuing')
-  }
-})
-
-
-
 /* HEADER ▶ NAV (@MEDIA 메뉴 토글 버튼) */
 const navEl = document.querySelector('nav')
 const navMenuToggleEl = navEl.querySelector('.menu-toggler')
@@ -170,6 +158,18 @@ function showNavMenu() {
 function hideNavMenu() {
   navEl.classList.remove('menuing')
 }
+
+
+
+/* 뷰포트 크기가 변경되면 class 제거 */
+window.addEventListener('resize', function () {
+  if (window.innerWidth <= 740){
+    headerEl.classList.remove('searching')
+  } else {
+    headerEl.classList.remove('searching-mobile')
+    headerEl.classList.remove('menuing')
+  }
+})
 
 
 
@@ -268,7 +268,8 @@ navigations.forEach(function(nav){
 
   mapEl.innerHTML = 
   /* HTML */ `<h3>
-    <span class="text">${nav.title}</span>"
+    <span class="text">${nav.title}</span>
+    <span class="icon">+</span>
   </h3>
   <ul>
     ${mapList}
@@ -276,6 +277,18 @@ navigations.forEach(function(nav){
   `
   //요소.append(데이터)
   navigationEl.append(mapEl)
+})
+
+
+
+/* NAVIGATIONS (@media 네비게이션 클릭 시 열림) */
+const mapEls = document.querySelectorAll('footer .navigations .map')
+
+mapEls.forEach(function (el) {
+  const h3El = el.querySelector('h3')
+  h3El.addEventListener('click', function () {
+    el.classList.toggle('active')
+  })
 })
 
 
